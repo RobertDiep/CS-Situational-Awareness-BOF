@@ -22,6 +22,7 @@ Realistically, this could be compressed into a helper script, but those steps we
 |adcs_enum_com2 | adcs_enum_com2 | Enumerates CAs and templates in the AD using IX509PolicyServerListManager COM object |
 |adv_audit_policies | adv_audit_policies | Retrieves advanced security audit policies |
 |cacls|cacls [filepath]|lists user permissions for the specified file, wildcards supported|
+|checkcert|checkcert [hostname] [opt:port]|Perform an HTTPS request to <hostname>:<port> (default 443) and return the issuer of the certificate.\nUseful for checking if an intercepting proxy is in your way.|
 |dir|dir [directory] [/s]|List files in a directory. Supports wildcards (e.g. "C:\Windows\S*") the CobaltStrike `ls` command|
 |driversigs|driversigs| enumerate installed services Imagepaths to check the signing cert against known edr/av vendors|
 |enum_filter_driver|enum_filter_driver [opt:computer] | Enumerates all the filter drivers|
