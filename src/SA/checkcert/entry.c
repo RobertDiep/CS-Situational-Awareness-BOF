@@ -52,6 +52,8 @@ void get_certificate(const char * url, int port) {
                 if(WINHTTP$WinHttpQueryOption(hRequest, WINHTTP_OPTION_SECURITY_CERTIFICATE_STRUCT, &hCertInfo, &dwSizeCertInfo))
                 {
                     internal_printf("Certificate issuer: \n----\n%ls\n----", hCertInfo.lpszIssuerInfo);
+                    KERNEL32$LocalFree(hCertInfo.lpszIssuerInfo);
+                    KERNEL32$LocalFree(hCertInfo.lpszSubjectInfo);
                 } else { 
                     internal_printf("[!] Error in WinHttpQueryOption\n");
                 }
