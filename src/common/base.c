@@ -15,6 +15,7 @@ void internal_printf(const char* format, ...);
 void printoutput(BOOL done);
 #endif
 char * Utf16ToUtf8(const wchar_t* input);
+wchar_t * Utf8ToUtf16(const char * input);
 #ifdef BOF
 int bofstart()
 {   
@@ -196,6 +197,27 @@ fail:
         newString = NULL;
     };
     goto retloc;
+}
+
+wchar_t * Utf8ToUtf16(const char* input) 
+{
+    wchar_t* newString = NULL;
+    int len = 0;
+    
+    len = Kernel32$MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, input, -1, NULL, 0);
+    if (len > 0)
+    {
+        newString = (wchar_t *)intAlloc(sizeof(wchar_t) * len);
+        if(NULL != newString) 
+        {
+            if(Kernel32$MultiByteToWideChar(CP_UTF8, 0, input, -1, newString, len) == 0) {
+                intFree(newString);
+                newString = NULL;
+            }
+        }
+    }
+
+    return newString;
 }
 
 //release any global functions here

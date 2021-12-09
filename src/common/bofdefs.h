@@ -13,6 +13,8 @@
 #include <winnetwk.h>
 #include <wtsapi32.h>
 #include <shlwapi.h>
+#include <winhttp.h>
+
 
 //KERNEL32
 #ifdef BOF
@@ -26,6 +28,7 @@ WINBASEAPI HANDLE WINAPI KERNEL32$GetProcessHeap();
 WINBASEAPI BOOL WINAPI KERNEL32$HeapFree (HANDLE, DWORD, PVOID);
 WINBASEAPI DWORD WINAPI KERNEL32$FormatMessageA (DWORD dwFlags, LPCVOID lpSource, DWORD dwMessageId, DWORD dwLanguageId, LPSTR lpBuffer, DWORD nSize, va_list *Arguments);
 WINBASEAPI int WINAPI Kernel32$WideCharToMultiByte (UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar);
+WINBASEAPI int WINAPI Kernel32$MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 WINBASEAPI int WINAPI KERNEL32$FileTimeToLocalFileTime (CONST FILETIME *lpFileTime, LPFILETIME lpLocalFileTime);
 WINBASEAPI int WINAPI KERNEL32$FileTimeToSystemTime (CONST FILETIME *lpFileTime, LPSYSTEMTIME lpSystemTime);
 WINBASEAPI int WINAPI KERNEL32$GetDateFormatW (LCID Locale, DWORD dwFlags, CONST SYSTEMTIME *lpDate, LPCWSTR lpFormat, LPWSTR lpDateStr, int cchDate);
@@ -395,10 +398,23 @@ DECLSPEC_IMPORT DWORD WINAPI VERSION$GetFileVersionInfoSizeA(LPCSTR lptstrFilena
 DECLSPEC_IMPORT WINBOOL WINAPI VERSION$GetFileVersionInfoA(LPCSTR lptstrFilename, DWORD dwHandle, DWORD dwLen, LPVOID lpData);
 DECLSPEC_IMPORT WINBOOL WINAPI VERSION$VerQueryValueA(LPCVOID pBlock, LPCSTR lpSubBlock, LPVOID *lplpBuffer, PUINT puLen);
 
+// WINHTTP
+DECLSPEC_IMPORT HINTERNET WINHTTPAPI WINHTTP$WinHttpConnect(HINTERNET hSession, LPCWSTR pswzServerName, WORD port, DWORD dwReserved);
+DECLSPEC_IMPORT HINTERNET WINHTTPAPI  WINHTTP$WinHttpOpenRequest(HINTERNET hConnect, LPCWSTR pwszVerb, LPCWSTR pwszObjectName, LPCWSTR pwszVersion, LPCWSTR pwszReferrer, LPCWSTR *ppwszAcceptTypes, DWORD dwFlags);
+DECLSPEC_IMPORT WINBOOL WINHTTPAPI WINHTTP$WinHttpQueryOption(HINTERNET hInternet, DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufferLength);
+DECLSPEC_IMPORT HINTERNET WINHTTPAPI WINHTTP$WinHttpOpen(LPCWSTR pszAgentW, DWORD dwAccessType, LPCWSTR pszProxyW, LPCWSTR pszProxyBypassW, DWORD dwFlags);
+DECLSPEC_IMPORT WINBOOL WINHTTPAPI WINHTTP$WinHttpCloseHandle(HINTERNET hInternet);
+DECLSPEC_IMPORT WINBOOL WINHTTPAPI WINHTTP$WinHttpSendRequest(HINTERNET hRequest, LPCWSTR lpszHeaders, DWORD dwHeadersLength, LPVOID lpOptional, DWORD dwOptionalLength, DWORD dwTotalLength, DWORD_PTR dwContext);
 
+// #define WINHTTP$WinHttpConnect WinHttpConnect
+// #define WINHTTP$WinHttpOpenRequest WinHttpOpenRequest
+
+// #define WINHTTP$WinHttpQueryOption WinHttpQueryOption
+// #define WINHTTP$WinHttpOpen WinHttpOpen
+// #define WINHTTP$WinHttpCloseHandle WinHttpCloseHandle
+// #define WINHTTP$WinHttpSendRequest WinHttpSendRequest
 
 #else
-
 
 #define intAlloc(size) KERNEL32$HeapAlloc(KERNEL32$GetProcessHeap(), HEAP_ZERO_MEMORY, size)
 #define intRealloc(ptr, size) (ptr) ? KERNEL32$HeapReAlloc(KERNEL32$GetProcessHeap(), HEAP_ZERO_MEMORY, ptr, size) : KERNEL32$HeapAlloc(KERNEL32$GetProcessHeap(), HEAP_ZERO_MEMORY, size)
@@ -415,6 +431,7 @@ DECLSPEC_IMPORT WINBOOL WINAPI VERSION$VerQueryValueA(LPCVOID pBlock, LPCSTR lpS
 #define KERNEL32$HeapFree  HeapFree 
 #define Kernel32$FormatMessageA  FormatMessageA 
 #define Kernel32$WideCharToMultiByte  WideCharToMultiByte 
+#define Kernel32$MultiByteToWideChar  MultiByteToWideChar 
 #define KERNEL32$FileTimeToLocalFileTime  FileTimeToLocalFileTime 
 #define KERNEL32$FileTimeToSystemTime  FileTimeToSystemTime 
 #define KERNEL32$GetDateFormatW  GetDateFormatW 
@@ -723,4 +740,12 @@ DECLSPEC_IMPORT WINBOOL WINAPI VERSION$VerQueryValueA(LPCVOID pBlock, LPCSTR lpS
 #define VERSION$VerQueryValueA VerQueryValueA
 #define BeaconPrintf(x, y, ...) printf(y, ##__VA_ARGS__)
 #define internal_printf printf
+
+#define WINHTTP$WinHttpConnect WinHttpConnect
+#define WINHTTP$WinHttpQueryOption WinHttpQueryOption
+#define WINHTTP$WinHttpOpen WinHttpOpen
+#define WINHTTP$WinHttpOpenRequest WinHttpOpenRequest
+#define WINHTTP$WinHttpCloseHandle WinHttpCloseHandle
+#define WINHTTP$WinHttpSendRequest WinHttpSendRequest
+
 #endif

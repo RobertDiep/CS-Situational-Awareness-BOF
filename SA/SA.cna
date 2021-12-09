@@ -1367,3 +1367,25 @@ target \"\" for the local computer
 
 Usage: get_password_policy [hostname]"
 );
+
+
+alias checkcert {
+	local('$args $barch $lookup $server $type');
+	
+	if(size(@_) < 2)
+	{
+		berror($1, beacon_command_detail("checkcert"));
+		return;
+	}
+
+	$hostname = $2;
+	$port = $3;
+
+	$args = bof_pack($1, "zi", $hostname, $port);
+	beacon_inline_execute($1, readbof($1, "checkcert"), "go", $args);
+}
+
+beacon_command_register(
+	"checkcert", 
+	"perform an HTTPS request to a domain to determine certificate", 
+	"Synopsis: checkcert <hostname> <optional port> \n\nPerform a HTTP request to <hostname>:<port> and return the issuer of the certificate.\nUseful for checking if an intercepting proxy is in your way.");
